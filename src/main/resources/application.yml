@@ -1,0 +1,62 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: api-gateway
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
+                allowedMethods: "*"
+                allowedHeaders: "*"
+                allowCredentials: true
+          routes:
+            - id: ms-security
+              uri: ${AUTH_URI:http://localhost:8081}
+              predicates:
+                - Path=/api/v1/auth/**
+            - id: ms-classroom-management
+              uri: ${CLASSROOM_URI:http://localhost:3002}
+              predicates:
+                - Path=/api/v1/educational-environments/**,/api/v1/classrooms/**
+            - id: ms-sensor-management
+              uri: ${SENSOR_URI:http://localhost:3004}
+              predicates:
+                - Path=/api/v1/sensors/**,/api/v1/variables/**,/api/v1/sensor-installations/**,/api/v1/sensor-variables/**
+            - id: ms-environment-monitoring
+              uri: ${MONITORING_URI:http://localhost:3003}
+              predicates:
+                - Path=/api/v1/environmental-data/**,/api/v1/measurements/**,/api/v1/alerts/**
+            - id: ms-user-management
+              uri: ${USER_MANAGEMENT_URI:http://localhost:3007}
+              predicates:
+                - Path=/api/v1/users/**,/api/v1/user-profiles/**
+            - id: ms-user-experience
+              uri: ${USER_EXPERIENCE_URI:http://localhost:3006}
+              predicates:
+                - Path=/api/v1/preferences/**,/api/v1/favorites/**
+
+app:
+  jwt:
+    jwks-uri: ${AUTH_JWKS_URI:http://localhost:8081/api/v1/auth/jwks}
+  rate-limit:
+    max-requests: ${RATE_LIMIT_MAX:100}
+    window-seconds: ${RATE_LIMIT_WINDOW:60}
+    exempt-paths:
+      - /health
+  upstreams:
+    ms-security: ${AUTH_URI:http://localhost:8081}
+    ms-classroom-management: ${CLASSROOM_URI:http://localhost:3002}
+    ms-sensor-management: ${SENSOR_URI:http://localhost:3004}
+    ms-environment-monitoring: ${MONITORING_URI:http://localhost:3003}
+    ms-user-management: ${USER_MANAGEMENT_URI:http://localhost:3007}
+    ms-user-experience: ${USER_EXPERIENCE_URI:http://localhost:3006}
