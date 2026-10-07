@@ -49,7 +49,7 @@ spring:
             - id: ms-environment-monitoring
               uri: ${MONITORING_URI:http://localhost:3003}
               predicates:
-                - Path=/api/v1/environmental-data/**,/api/v1/measurements/**,/api/v1/environments/**,/api/v1/analyses/**,/api/v1/alerts/**
+                - Path=/api/v1/environmental-data/**,/api/v1/measurements/**,/api/v1/environments/**,/api/v1/analyses/**,/api/v1/alerts/**,/api/v1/dashboard/**
             - id: ms-user-management
               uri: ${USER_MANAGEMENT_URI:http://localhost:3007}
               predicates:
@@ -57,7 +57,7 @@ spring:
             - id: ms-user-experience
               uri: ${USER_EXPERIENCE_URI:http://localhost:3006}
               predicates:
-                - Path=/api/v1/preferences/**,/api/v1/favorites/**
+                - Path=/api/v1/preferences/**,/api/v1/favorites/**,/api/v1/ratings/**,/api/v1/searches/**,/api/v1/classrooms/*/ratings/**
 
 app:
   bff:
