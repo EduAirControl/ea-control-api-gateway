@@ -39,7 +39,7 @@ spring:
             - id: ms-classroom-management
               uri: ${CLASSROOM_URI:http://localhost:3002}
               predicates:
-                - Path=/api/v1/educational-environments/**,/api/v1/classrooms/**
+                - Path=/api/v1/educational-environments/**,/api/v1/campuses/**,/api/v1/environment-types/**,/api/v1/classrooms/**
             - id: ms-sensor-management
               uri: ${SENSOR_URI:http://localhost:3004}
               predicates:
