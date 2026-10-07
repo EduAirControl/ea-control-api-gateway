@@ -23,6 +23,12 @@ class PublicPathsTest {
     }
 
     @Test
+    void oauth2LoginPathsArePublic() {
+        assertThat(PublicPaths.isPublic(HttpMethod.GET, "/oauth2/authorization/web")).isTrue();
+        assertThat(PublicPaths.isPublic(HttpMethod.GET, "/login/oauth2/code/web")).isTrue();
+    }
+
+    @Test
     void logoutAndBusinessRoutesRequireAuthentication() {
         assertThat(PublicPaths.isPublic(HttpMethod.POST, "/api/v1/auth/logout")).isFalse();
         assertThat(PublicPaths.isPublic(HttpMethod.GET, "/api/v1/sensors")).isFalse();

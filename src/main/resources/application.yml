@@ -8,6 +8,25 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
+  session:
+    timeout: ${SESSION_TIMEOUT:8h}
+  security:
+    oauth2:
+      client:
+        registration:
+          web:
+            client-id: ${OAUTH2_CLIENT_ID:ea-control-web}
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid, profile
+            client-authentication-method: none
+        provider:
+          web:
+            authorization-uri: ${AUTH_ISSUER:http://localhost:8081}/oauth2/authorize
+            token-uri: ${AUTH_ISSUER:http://localhost:8081}/oauth2/token
+            jwk-set-uri: ${AUTH_ISSUER:http://localhost:8081}/oauth2/jwks
+            user-info-uri: ${AUTH_ISSUER:http://localhost:8081}/userinfo
+            user-name-attribute: sub
   cloud:
     gateway:
       server:
