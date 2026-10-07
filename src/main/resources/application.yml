@@ -65,6 +65,8 @@ spring:
                 - Path=/api/v1/preferences/**,/api/v1/favorites/**
 
 app:
+  bff:
+    frontend-url: ${BFF_FRONTEND_URL:http://localhost:5173/}
   jwt:
     jwks-uri: ${AUTH_JWKS_URI:http://localhost:8081/api/v1/auth/jwks}
   rate-limit:
