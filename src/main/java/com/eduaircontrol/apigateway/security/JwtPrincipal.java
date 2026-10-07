@@ -7,6 +7,6 @@ import java.time.Instant;
  * servicios internos mediante los headers X-User-Id, X-User-Role,
  * X-Institution-Id y X-Campus-Id.
  */
-public record JwtPrincipal(String userId, String role, String jti, Instant expiresAt,
+public record JwtPrincipal(String userId, String email, String role, String jti, Instant expiresAt,
         String institutionId, String campusId) {
 }

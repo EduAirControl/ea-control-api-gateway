@@ -33,8 +33,12 @@ public class JwtValidator {
                         .build()
                         .parseClaimsJws(token)
                         .getBody();
+                String subject = claims.getSubject();
+                String userId = claimAsString(claims, "userId");
+                String email = claimAsString(claims, "email");
                 return new JwtPrincipal(
-                        claims.getSubject(),
+                        userId != null ? userId : subject,
+                        email != null ? email : subject,
                         firstRole(claims),
                         claims.getId(),
                         claims.getExpiration() == null ? null : claims.getExpiration().toInstant(),
