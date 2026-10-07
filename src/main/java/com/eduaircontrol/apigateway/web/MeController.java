@@ -46,7 +46,7 @@ public class MeController {
     private Map<String, Object> toBody(JwtPrincipal principal) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("userId", principal.userId());
-        body.put("email", principal.userId());
+        body.put("email", principal.email());
         body.put("role", principal.role());
         body.put("institutionId", principal.institutionId());
         body.put("campusId", principal.campusId());
