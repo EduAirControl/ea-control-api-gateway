@@ -31,13 +31,6 @@ spring:
     gateway:
       server:
         webflux:
-          globalcors:
-            cors-configurations:
-              '[/**]':
-                allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
-                allowedMethods: "*"
-                allowedHeaders: "*"
-                allowCredentials: true
           routes:
             - id: ms-security
               uri: ${AUTH_URI:http://localhost:8081}
