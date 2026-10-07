@@ -64,6 +64,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest().mutate()
                 .header("X-User-Id", principal.userId() == null ? "" : principal.userId())
                 .header("X-User-Role", principal.role() == null ? "" : principal.role())
+                .header("X-Institution-Id", principal.institutionId() == null ? "" : principal.institutionId())
+                .header("X-Campus-Id", principal.campusId() == null ? "" : principal.campusId())
                 .build();
         return chain.filter(exchange.mutate().request(request).build());
     }

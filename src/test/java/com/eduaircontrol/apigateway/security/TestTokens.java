@@ -32,6 +32,8 @@ public final class TestTokens {
                 .setSubject(subject)
                 .setId(jti)
                 .claim("roles", roles)
+                .claim("institutionId", "inst-test")
+                .claim("campusId", "campus-test")
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(expiration))
                 .setHeaderParam("kid", KID)

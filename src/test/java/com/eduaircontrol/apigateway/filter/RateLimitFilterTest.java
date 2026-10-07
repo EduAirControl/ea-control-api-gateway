@@ -82,7 +82,7 @@ class RateLimitFilterTest {
         });
         MockServerWebExchange exchange = exchange("/api/v1/sensors");
         exchange.getAttributes().put(JwtAuthenticationFilter.PRINCIPAL_ATTRIBUTE,
-                new JwtPrincipal("user-9", "USER", "jti", Instant.now()));
+                new JwtPrincipal("user-9", "USER", "jti", Instant.now(), "inst", "campus"));
 
         filter.filter(exchange, chain()).block();
 
