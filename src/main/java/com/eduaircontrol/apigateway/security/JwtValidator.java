@@ -36,10 +36,12 @@ public class JwtValidator {
                 String subject = claims.getSubject();
                 String userId = claimAsString(claims, "userId");
                 String email = claimAsString(claims, "email");
+                List<String> roles = rolesOf(claims);
                 return new JwtPrincipal(
                         userId != null ? userId : subject,
                         email != null ? email : subject,
-                        firstRole(claims),
+                        roles.isEmpty() ? null : roles.get(0),
+                        roles,
                         claims.getId(),
                         claims.getExpiration() == null ? null : claims.getExpiration().toInstant(),
                         claimAsString(claims, "institutionId"),
@@ -64,12 +66,12 @@ public class JwtValidator {
         throw new UnauthorizedException("INVALID_TOKEN", "Malformed token header");
     }
 
-    static String firstRole(Claims claims) {
+    static List<String> rolesOf(Claims claims) {
         Object roles = claims.get("roles");
-        if (roles instanceof List<?> list && !list.isEmpty()) {
-            return String.valueOf(list.get(0));
+        if (roles instanceof List<?> list) {
+            return list.stream().map(String::valueOf).toList();
         }
-        return null;
+        return List.of();
     }
 
     static String claimAsString(Claims claims, String name) {
