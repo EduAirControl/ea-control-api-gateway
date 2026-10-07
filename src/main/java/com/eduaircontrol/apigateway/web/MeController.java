@@ -48,6 +48,7 @@ public class MeController {
         body.put("userId", principal.userId());
         body.put("email", principal.email());
         body.put("role", principal.role());
+        body.put("roles", principal.roles());
         body.put("institutionId", principal.institutionId());
         body.put("campusId", principal.campusId());
         return body;
