@@ -52,10 +52,11 @@ public class BffSecurityConfig {
      * los endpoints locales del BFF (p. ej. {@code /api/v1/me}).
      */
     @Bean
-    CorsConfigurationSource corsConfigurationSource(
-            @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:5173}") String allowedOrigins) {
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(allowedOrigins.split(",")));
+        // Dev: refleja cualquier origen (localhost, 127.0.0.1, LAN). En producción
+        // restringir a los orígenes reales del frontend.
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
