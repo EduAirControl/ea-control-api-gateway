@@ -32,6 +32,17 @@ Los endpoints públicos son `/health`, `/api/v1/auth/health`, `/api/v1/auth/regi
 `Authorization: Bearer <access_token>`; el gateway valida firma, expiración y lista negra,
 y reenvía la identidad como headers internos. La autorización fina la aplica cada servicio.
 
+## BFF (Backend-for-Frontend, ADR-017)
+
+El gateway también actúa como **cliente OAuth2** del navegador:
+
+- Inicia sesión en `/oauth2/authorization/web` (Authorization Code + **PKCE** contra
+  `ms-security`), con callback en `/login/oauth2/code/web`.
+- Guarda los tokens **en el servidor** (sesión en **Redis**) y expone solo una cookie
+  `SESSION` **httpOnly**; el token nunca llega a JavaScript.
+- Para las llamadas de API toma el access token de la sesión (o de la cabecera Bearer) y
+  propaga `X-User-Id`, `X-User-Role`, `X-Institution-Id`, `X-Campus-Id`.
+
 ## Ejecutar
 
 ```bash
@@ -41,6 +52,9 @@ docker compose up --build
 # verificación
 curl http://localhost:8080/health
 ```
+
+Variables: `AUTH_ISSUER` (issuer OAuth2 de ms-security), `OAUTH2_CLIENT_ID`,
+`SESSION_TIMEOUT`, `REDIS_HOST`/`REDIS_PORT`.
 
 ## Pruebas
 
