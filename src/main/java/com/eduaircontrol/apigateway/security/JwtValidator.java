@@ -37,7 +37,9 @@ public class JwtValidator {
                         claims.getSubject(),
                         firstRole(claims),
                         claims.getId(),
-                        claims.getExpiration() == null ? null : claims.getExpiration().toInstant());
+                        claims.getExpiration() == null ? null : claims.getExpiration().toInstant(),
+                        claimAsString(claims, "institutionId"),
+                        claimAsString(claims, "campusId"));
             } catch (JwtException | IllegalArgumentException e) {
                 throw new UnauthorizedException("INVALID_TOKEN", "Invalid or expired token");
             }
@@ -64,5 +66,10 @@ public class JwtValidator {
             return String.valueOf(list.get(0));
         }
         return null;
+    }
+
+    static String claimAsString(Claims claims, String name) {
+        Object value = claims.get(name);
+        return value == null ? null : String.valueOf(value);
     }
 }

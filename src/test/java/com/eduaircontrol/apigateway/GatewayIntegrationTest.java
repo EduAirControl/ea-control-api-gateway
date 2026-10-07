@@ -58,6 +58,7 @@ class GatewayIntegrationTest {
             } else {
                 body = "{\"userId\":\"" + header(exchange, "X-User-Id")
                         + "\",\"role\":\"" + header(exchange, "X-User-Role")
+                        + "\",\"institutionId\":\"" + header(exchange, "X-Institution-Id")
                         + "\",\"correlationId\":\"" + header(exchange, "X-Correlation-Id") + "\"}";
             }
             byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
@@ -135,6 +136,7 @@ class GatewayIntegrationTest {
                 .expectBody()
                 .jsonPath("$.userId").isEqualTo("user-42")
                 .jsonPath("$.role").isEqualTo("ADMIN")
+                .jsonPath("$.institutionId").isEqualTo("inst-test")
                 .jsonPath("$.correlationId").isEqualTo("corr-xyz");
     }
 
