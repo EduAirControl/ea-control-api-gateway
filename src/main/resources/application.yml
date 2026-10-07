@@ -57,7 +57,7 @@ spring:
             - id: ms-user-experience
               uri: ${USER_EXPERIENCE_URI:http://localhost:3006}
               predicates:
-                - Path=/api/v1/preferences/**,/api/v1/favorites/**
+                - Path=/api/v1/preferences/**,/api/v1/favorites/**,/api/v1/ratings/**,/api/v1/searches/**,/api/v1/classrooms/*/ratings/**
 
 app:
   bff:
