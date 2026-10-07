@@ -31,6 +31,9 @@ public final class PublicPaths {
         if (path.startsWith("/oauth2/") || path.startsWith("/login")) {
             return true;
         }
+        if (path.startsWith("/api/v1/auth/oauth2/")) {
+            return true;
+        }
         return EXACT.contains(path);
     }
 }
