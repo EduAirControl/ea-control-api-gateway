@@ -49,7 +49,7 @@ spring:
             - id: ms-environment-monitoring
               uri: ${MONITORING_URI:http://localhost:3003}
               predicates:
-                - Path=/api/v1/environmental-data/**,/api/v1/measurements/**,/api/v1/alerts/**
+                - Path=/api/v1/environmental-data/**,/api/v1/measurements/**,/api/v1/environments/**,/api/v1/analyses/**,/api/v1/alerts/**
             - id: ms-user-management
               uri: ${USER_MANAGEMENT_URI:http://localhost:3007}
               predicates:
