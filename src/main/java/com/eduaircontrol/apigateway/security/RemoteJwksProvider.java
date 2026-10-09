@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -45,9 +46,13 @@ public class RemoteJwksProvider implements JwksProvider {
         return webClient.get()
                 .uri(jwksUri)
                 .retrieve()
-                .bodyToMono(Map.class)
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .doOnNext(body -> log.debug("JWKS raw response: {}", body))
                 .map(this::parse)
-                .doOnNext(cache::set)
+                .doOnNext(keys -> {
+                    log.debug("JWKS cache updated with {} keys: {}", keys.size(), keys.keySet());
+                    cache.set(keys);
+                })
                 .doOnError(error -> log.warn("No se pudo obtener JWKS de {}: {}", jwksUri, error.getMessage()))
                 .onErrorResume(error -> Mono.just(cache.get()));
     }

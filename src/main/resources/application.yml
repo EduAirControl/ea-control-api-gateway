@@ -37,7 +37,7 @@ spring:
             - id: ms-security
               uri: ${AUTH_URI:http://localhost:8081}
               predicates:
-                - Path=/api/v1/auth/**,/api/v1/institutions/**
+                - Path=/api/v1/auth/**,/api/v1/institutions/**,/api/v1/admin/**,/api/v1/device-tokens/**
             - id: ms-classroom-management
               uri: ${CLASSROOM_URI:http://localhost:3002}
               predicates:
@@ -45,7 +45,7 @@ spring:
             - id: ms-sensor-management
               uri: ${SENSOR_URI:http://localhost:3004}
               predicates:
-                - Path=/api/v1/sensors/**,/api/v1/variables/**,/api/v1/sensor-installations/**,/api/v1/sensor-variables/**
+                - Path=/api/v1/sensors/**,/api/v1/variables/**,/api/v1/sensor-installations/**,/api/v1/sensor-variables/**,/api/v1/sensor-models/**,/api/v1/sensor-statuses/**,/api/v1/measurement-units/**
             - id: ms-environment-monitoring
               uri: ${MONITORING_URI:http://localhost:3003}
               predicates:
