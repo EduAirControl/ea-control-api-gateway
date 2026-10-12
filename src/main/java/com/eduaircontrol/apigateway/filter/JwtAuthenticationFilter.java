@@ -78,6 +78,10 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest().mutate()
                 .header("X-User-Id", principal.userId() == null ? "" : principal.userId())
                 .header("X-User-Role", principal.role() == null ? "" : principal.role())
+                // X-User-Roles lleva el rol completo (coma-separado). X-User-Role solo
+                // conserva el primero, y con un usuario de varios roles eso bastaba para
+                // perder SUPER_ADMIN al cruzar el gateway.
+                .header("X-User-Roles", principal.roles() == null ? "" : String.join(",", principal.roles()))
                 .header("X-Institution-Id", principal.institutionId() == null ? "" : principal.institutionId())
                 .header("X-Campus-Id", principal.campusId() == null ? "" : principal.campusId())
                 .build();
