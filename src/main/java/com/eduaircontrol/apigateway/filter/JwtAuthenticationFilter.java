@@ -48,11 +48,11 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         return resolveToken(exchange)
                 .switchIfEmpty(Mono.error(new UnauthorizedException(
                         "MISSING_TOKEN", "Authentication required")))
-                .flatMap(token -> Mono.defer(() -> jwtValidator.validate(token)))
-                .flatMap(principal -> stateStore.isBlacklisted(principal.jti())
-                        .flatMap(blacklisted -> blacklisted
-                                ? unauthorized(exchange, "TOKEN_REVOKED", "Token has been revoked")
-                                : forward(exchange, chain, principal)))
+                .flatMap(token -> Mono.defer(() -> jwtValidator.validate(token))
+                        .flatMap(principal -> stateStore.isBlacklisted(principal.jti())
+                                .flatMap(blacklisted -> blacklisted
+                                        ? unauthorized(exchange, "TOKEN_REVOKED", "Token has been revoked")
+                                        : forward(exchange, chain, principal, token))))
                 .onErrorResume(UnauthorizedException.class, error ->
                         unauthorized(exchange, error.getCode(), error.getMessage()))
                 .onErrorResume(error -> unauthorized(exchange, "INVALID_TOKEN", "Invalid or expired token"));
@@ -73,7 +73,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
                 .map(client -> client.getAccessToken().getTokenValue());
     }
 
-    private Mono<Void> forward(ServerWebExchange exchange, GatewayFilterChain chain, JwtPrincipal principal) {
+    private Mono<Void> forward(ServerWebExchange exchange, GatewayFilterChain chain, JwtPrincipal principal,
+                               String accessToken) {
         exchange.getAttributes().put(PRINCIPAL_ATTRIBUTE, principal);
         ServerHttpRequest request = exchange.getRequest().mutate()
                 .header("X-User-Id", principal.userId() == null ? "" : principal.userId())
@@ -84,6 +85,16 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
                 .header("X-User-Roles", principal.roles() == null ? "" : String.join(",", principal.roles()))
                 .header("X-Institution-Id", principal.institutionId() == null ? "" : principal.institutionId())
                 .header("X-Campus-Id", principal.campusId() == null ? "" : principal.campusId())
+                .headers(headers -> {
+                    // Los servicios validan el JWT ellos mismos (ADR-006). Si el
+                    // cliente no envio Authorization (flujo BFF por cookie), se le
+                    // pasa el token resuelto: sin esto, un servicio no distingue una
+                    // peticion que viene del gateway de una hecha por cualquiera en
+                    // la red, y los headers X-User-* se pueden forjar.
+                    if (headers.getFirst(HttpHeaders.AUTHORIZATION) == null) {
+                        headers.set(HttpHeaders.AUTHORIZATION, BEARER + accessToken);
+                    }
+                })
                 .build();
         return chain.filter(exchange.mutate().request(request).build());
     }
