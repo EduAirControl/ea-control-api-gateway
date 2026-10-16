@@ -41,7 +41,7 @@ spring:
             - id: ms-classroom-management
               uri: ${CLASSROOM_URI:http://localhost:3002}
               predicates:
-                - Path=/api/v1/educational-environments/**,/api/v1/campuses/**,/api/v1/environment-types/**,/api/v1/classrooms/**
+                - Path=/api/v1/educational-environments/**,/api/v1/campuses/**,/api/v1/environment-types/**
             - id: ms-sensor-management
               uri: ${SENSOR_URI:http://localhost:3004}
               predicates:
@@ -49,15 +49,15 @@ spring:
             - id: ms-environment-monitoring
               uri: ${MONITORING_URI:http://localhost:3003}
               predicates:
-                - Path=/api/v1/environmental-data/**,/api/v1/measurements/**,/api/v1/environments/**,/api/v1/analyses/**,/api/v1/alerts/**,/api/v1/dashboard/**
+                - Path=/api/v1/measurements/**,/api/v1/environments/**,/api/v1/analyses/**,/api/v1/alerts/**,/api/v1/dashboard/**
             - id: ms-user-management
               uri: ${USER_MANAGEMENT_URI:http://localhost:3007}
               predicates:
-                - Path=/api/v1/users/**,/api/v1/user-profiles/**
+                - Path=/api/v1/users/**
             - id: ms-user-experience
               uri: ${USER_EXPERIENCE_URI:http://localhost:3006}
               predicates:
-                - Path=/api/v1/preferences/**,/api/v1/favorites/**,/api/v1/ratings/**,/api/v1/searches/**,/api/v1/classrooms/*/ratings/**
+                - Path=/api/v1/preferences/**,/api/v1/favorites/**,/api/v1/ratings/**,/api/v1/searches/**,/api/v1/classrooms/*/ratings,/api/v1/classrooms/*/ratings/**
 
 app:
   bff:
