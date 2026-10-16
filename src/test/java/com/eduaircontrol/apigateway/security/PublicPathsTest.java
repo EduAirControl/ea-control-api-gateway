@@ -29,6 +29,20 @@ class PublicPathsTest {
     }
 
     @Test
+    void socialLoginFlowIsPublic() {
+        assertThat(PublicPaths.isPublic(HttpMethod.GET, "/api/v1/auth/oauth2/google")).isTrue();
+        assertThat(PublicPaths.isPublic(HttpMethod.GET, "/api/v1/auth/oauth2/facebook")).isTrue();
+        assertThat(PublicPaths.isPublic(HttpMethod.GET, "/api/v1/auth/oauth2/google/callback")).isTrue();
+        assertThat(PublicPaths.isPublic(HttpMethod.GET, "/api/v1/auth/oauth2/facebook/callback")).isTrue();
+        assertThat(PublicPaths.isPublic(HttpMethod.POST, "/api/v1/auth/oauth2/social/exchange")).isTrue();
+    }
+
+    @Test
+    void socialOnboardingRequiresAuthentication() {
+        assertThat(PublicPaths.isPublic(HttpMethod.POST, "/api/v1/auth/oauth2/onboarding")).isFalse();
+    }
+
+    @Test
     void logoutAndBusinessRoutesRequireAuthentication() {
         assertThat(PublicPaths.isPublic(HttpMethod.POST, "/api/v1/auth/logout")).isFalse();
         assertThat(PublicPaths.isPublic(HttpMethod.GET, "/api/v1/sensors")).isFalse();

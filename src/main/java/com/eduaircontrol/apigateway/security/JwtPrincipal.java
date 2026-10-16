@@ -5,7 +5,8 @@ import java.util.List;
 
 /**
  * Identidad extraída de un access token válido. El gateway la propaga a los
- * servicios internos mediante los headers X-User-Id, X-User-Role,
+ * servicios internos mediante los headers X-User-Id, X-User-Role (primer rol,
+ * por compatibilidad), X-User-Roles (todos los roles, coma-separados),
  * X-Institution-Id y X-Campus-Id.
  */
 public record JwtPrincipal(String userId, String email, String role, List<String> roles, String jti,

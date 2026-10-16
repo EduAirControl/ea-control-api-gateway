@@ -21,6 +21,15 @@ public final class PublicPaths {
             "/api/v1/auth/reset-password",
             "/api/v1/auth/jwks");
 
+    /** Flujo social: inicio, callbacks del proveedor y canje del codigo de un solo uso.
+     *  El onboarding NO esta aqui: exige token (el usuario sale del JWT). */
+    private static final List<String> SOCIAL = List.of(
+            "/api/v1/auth/oauth2/google",
+            "/api/v1/auth/oauth2/facebook",
+            "/api/v1/auth/oauth2/google/callback",
+            "/api/v1/auth/oauth2/facebook/callback",
+            "/api/v1/auth/oauth2/social/exchange");
+
     private PublicPaths() {
     }
 
@@ -31,9 +40,6 @@ public final class PublicPaths {
         if (path.startsWith("/oauth2/") || path.startsWith("/login")) {
             return true;
         }
-        if (path.startsWith("/api/v1/auth/oauth2/")) {
-            return true;
-        }
-        return EXACT.contains(path);
+        return EXACT.contains(path) || SOCIAL.contains(path);
     }
 }
