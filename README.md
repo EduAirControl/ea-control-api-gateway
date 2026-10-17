@@ -9,6 +9,7 @@ comunes de borde. **No contiene lógica de negocio ni datos de dominio.**
 - Lista negra de tokens en Redis (`blacklist:{jti}`, solo lectura — la escribe `ms-security`)
 - Rate limiting global con contadores en Redis (por IP en público, por usuario autenticado)
 - Propaga `X-User-Id`, `X-User-Role` y `X-Correlation-Id` a los servicios internos
+  (informativo desde ADR-018: los servicios autentican solo el JWT `Authorization`)
 - Puerto **8080**
 
 ## Rutas
@@ -41,7 +42,8 @@ El gateway también actúa como **cliente OAuth2** del navegador:
 - Guarda los tokens **en el servidor** (sesión en **Redis**) y expone solo una cookie
   `SESSION` **httpOnly**; el token nunca llega a JavaScript.
 - Para las llamadas de API toma el access token de la sesión (o de la cabecera Bearer) y
-  propaga `X-User-Id`, `X-User-Role`, `X-Institution-Id`, `X-Campus-Id`.
+  propaga `X-User-Id`, `X-User-Role`, `X-Institution-Id`, `X-Campus-Id` — cabeceras
+  informativas (logs/traces); ningún servicio las usa como credencial (ADR-018).
 
 ## Ejecutar
 
