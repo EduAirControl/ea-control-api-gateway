@@ -35,7 +35,8 @@ class RateLimitFilterTest {
     void setUp() {
         store = mock(RedisStateStore.class);
         AppProperties properties = new AppProperties(
-                new AppProperties.Jwt("http://localhost:8081/api/v1/auth/jwks"),
+                new AppProperties.Jwt("http://localhost:8081/api/v1/auth/jwks",
+                        "http://localhost:8081", "eduaircontrol-api"),
                 new AppProperties.RateLimit(3, 60, List.of("/health")),
                 Map.of());
         filter = new RateLimitFilter(store, properties);
