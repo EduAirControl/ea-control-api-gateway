@@ -14,6 +14,10 @@ public final class TestTokens {
 
     public static final String KID = "test-kid";
 
+    /** Deben coincidir con los defaults de app.jwt.allowed-* / app.security.*. */
+    public static final String ISSUER = "http://localhost:8081";
+    public static final String AUDIENCE = "eduaircontrol-api";
+
     private TestTokens() {
     }
 
@@ -34,6 +38,8 @@ public final class TestTokens {
                 .claim("roles", roles)
                 .claim("institutionId", "inst-test")
                 .claim("campusId", "campus-test")
+                .setIssuer(ISSUER)
+                .setAudience(AUDIENCE)
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(expiration))
                 .setHeaderParam("kid", KID)

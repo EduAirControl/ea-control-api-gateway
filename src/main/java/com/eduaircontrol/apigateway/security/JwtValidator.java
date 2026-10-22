@@ -19,9 +19,13 @@ public class JwtValidator {
     private static final Pattern KID = Pattern.compile("\"kid\"\\s*:\\s*\"([^\"]+)\"");
 
     private final JwksProvider jwksProvider;
+    private final String allowedIssuer;
+    private final String allowedAudience;
 
-    public JwtValidator(JwksProvider jwksProvider) {
+    public JwtValidator(JwksProvider jwksProvider, String allowedIssuer, String allowedAudience) {
         this.jwksProvider = jwksProvider;
+        this.allowedIssuer = allowedIssuer;
+        this.allowedAudience = allowedAudience;
     }
 
     public Mono<JwtPrincipal> validate(String token) {
@@ -33,6 +37,12 @@ public class JwtValidator {
                         .build()
                         .parseClaimsJws(token)
                         .getBody();
+                // JJWT 0.11.5 no expone setAllowedIssuer/Audience en el builder
+                // (llegaron en 0.12): se exigen issuer y audience a mano (ADR-006).
+                if (!allowedIssuer.equals(claims.getIssuer())
+                        || !allowedAudience.equals(claims.getAudience())) {
+                    throw new UnauthorizedException("INVALID_TOKEN", "Invalid or expired token");
+                }
                 String subject = claims.getSubject();
                 String userId = claimAsString(claims, "userId");
                 String email = claimAsString(claims, "email");

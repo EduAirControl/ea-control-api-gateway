@@ -29,5 +29,5 @@ services:
     image: redis:7
     container_name: api-gateway-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     restart: always

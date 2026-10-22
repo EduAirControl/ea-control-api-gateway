@@ -16,7 +16,8 @@ public class GatewaySecurityConfig {
     }
 
     @Bean
-    JwtValidator jwtValidator(JwksProvider jwksProvider) {
-        return new JwtValidator(jwksProvider);
+    JwtValidator jwtValidator(JwksProvider jwksProvider, AppProperties properties) {
+        return new JwtValidator(jwksProvider,
+                properties.jwt().allowedIssuer(), properties.jwt().allowedAudience());
     }
 }
