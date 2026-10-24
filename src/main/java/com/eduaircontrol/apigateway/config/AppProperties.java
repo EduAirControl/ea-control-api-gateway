@@ -12,9 +12,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "app")
 public record AppProperties(Jwt jwt, RateLimit rateLimit, Map<String, String> upstreams) {
 
-    public record Jwt(String jwksUri) {
+    public record Jwt(String jwksUri, String allowedIssuer, String allowedAudience) {
     }
 
-    public record RateLimit(int maxRequests, int windowSeconds, List<String> exemptPaths) {
+    public record RateLimit(int maxRequests, int windowSeconds, List<String> exemptPaths, List<String> trustedProxies) {
     }
 }
