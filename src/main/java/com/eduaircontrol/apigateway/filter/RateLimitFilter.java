@@ -4,6 +4,7 @@ import com.eduaircontrol.apigateway.config.AppProperties;
 import com.eduaircontrol.apigateway.ratelimit.RedisStateStore;
 import com.eduaircontrol.apigateway.security.JwtPrincipal;
 import com.eduaircontrol.apigateway.support.ErrorWriter;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
@@ -61,14 +62,62 @@ public class RateLimitFilter implements GlobalFilter, Ordered {
     }
 
     private String clientIp(ServerWebExchange exchange) {
-        String forwarded = exchange.getRequest().getHeaders().getFirst("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
         InetSocketAddress remote = exchange.getRequest().getRemoteAddress();
-        return remote == null || remote.getAddress() == null
+        String remoteIp = remote == null || remote.getAddress() == null
                 ? "unknown"
                 : remote.getAddress().getHostAddress();
+
+        // Solo usamos X-Forwarded-For si el cliente directo es un proxy de confianza
+        if (isTrustedProxy(remoteIp)) {
+            String forwarded = exchange.getRequest().getHeaders().getFirst("X-Forwarded-For");
+            if (forwarded != null && !forwarded.isBlank()) {
+                return forwarded.split(",")[0].trim();
+            }
+        }
+        return remoteIp;
+    }
+
+    private boolean isTrustedProxy(String ip) {
+        if (ip == null || ip.isBlank() || "unknown".equals(ip)) {
+            return false;
+        }
+        List<String> trusted = properties.rateLimit().trustedProxies();
+        if (trusted == null || trusted.isEmpty()) {
+            return false;
+        }
+        for (String cidr : trusted) {
+            if (cidr == null || cidr.isBlank()) continue;
+            if (cidr.contains("/")) {
+                if (matchesCidr(ip, cidr)) return true;
+            } else if (ip.equals(cidr.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean matchesCidr(String ip, String cidr) {
+        try {
+            String[] parts = cidr.split("/");
+            InetAddress address = InetAddress.getByName(ip);
+            InetAddress network = InetAddress.getByName(parts[0]);
+            int prefixLength = Integer.parseInt(parts[1]);
+            byte[] addrBytes = address.getAddress();
+            byte[] netBytes = network.getAddress();
+            int bytes = prefixLength / 8;
+            int bits = prefixLength % 8;
+            for (int i = 0; i < bytes; i++) {
+                if (addrBytes[i] != netBytes[i]) return false;
+            }
+            if (bits > 0) {
+                int mask = 0xFF << (8 - bits);
+                return (addrBytes[bytes] & mask) == (netBytes[bytes] & mask);
+            }
+            return true;
+        } catch (Exception e) {
+            log.debug("Error comprobando CIDR {}: {}", cidr, e.getMessage());
+            return false;
+        }
     }
 
     private Mono<Void> tooMany(ServerWebExchange exchange, Duration window) {

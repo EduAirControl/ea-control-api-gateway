@@ -18,8 +18,15 @@ FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
+RUN groupadd -r appgroup -g 1000 && useradd -r -g appgroup -u 1000 appuser
 COPY --from=builder /app/target/*.jar app.jar
+RUN chown appuser:appgroup app.jar
+
+USER appuser
 
 EXPOSE 8080
+
+HEALTHCHECK --interval=10s --timeout=3s --start-period=40s --retries=3 \
+    CMD wget -qO- http://localhost:8080/health || exit 1
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
