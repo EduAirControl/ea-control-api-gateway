@@ -15,6 +15,6 @@ public record AppProperties(Jwt jwt, RateLimit rateLimit, Map<String, String> up
     public record Jwt(String jwksUri, String allowedIssuer, String allowedAudience) {
     }
 
-    public record RateLimit(int maxRequests, int windowSeconds, List<String> exemptPaths) {
+    public record RateLimit(int maxRequests, int windowSeconds, List<String> exemptPaths, List<String> trustedProxies) {
     }
 }

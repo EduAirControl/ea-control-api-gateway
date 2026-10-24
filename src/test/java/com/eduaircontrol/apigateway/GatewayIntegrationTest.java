@@ -160,4 +160,15 @@ class GatewayIntegrationTest {
                 .expectStatus().isOk()
                 .expectHeader().exists("X-Correlation-Id");
     }
+
+    @Test
+    void corsRejectsOriginNotInAllowedListWithCredentials() {
+        webTestClient.options().uri("/api/v1/sensors")
+                .header("Origin", "https://evil.example")
+                .header("Access-Control-Request-Method", "GET")
+                .header("Access-Control-Request-Headers", "Authorization")
+                .exchange()
+                .expectStatus().isOk() // OPTIONS preflight is allowed
+                .expectHeader().doesNotExist("Access-Control-Allow-Origin");
+    }
 }
