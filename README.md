@@ -45,6 +45,21 @@ El gateway también actúa como **cliente OAuth2** del navegador:
   propaga `X-User-Id`, `X-User-Role`, `X-Institution-Id`, `X-Campus-Id` — cabeceras
   informativas (logs/traces); ningún servicio las usa como credencial (ADR-018).
 
+## Configuration
+
+Runtime configuration is provided through environment variables. Start from the
+template and adapt the values locally:
+
+```bash
+cp .env.example .env   # local only: .env and *.env are gitignored, never commit them
+```
+
+[`.env.example`](./.env.example) lists every variable: server port, Redis, JWT/JWKS
+validation (`AUTH_JWKS_URI`, `AUTH_ISSUER`, `AUTH_AUDIENCE`), CORS origins, the BFF
+frontend URL, rate limiting (`RATE_LIMIT_MAX`, `RATE_LIMIT_WINDOW`,
+`RATE_LIMIT_EXEMPT_PATHS`, `RATE_LIMIT_TRUSTED_PROXIES`), upstream URIs and
+observability endpoints.
+
 ## Ejecutar
 
 ```bash

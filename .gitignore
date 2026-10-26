@@ -10,7 +10,10 @@ target/
 .DS_Store
 
 *.log
+
+# Local environment files (only .env.example is tracked; never commit real values)
 .env
+*.env
 
 # Instrucciones locales de agentes IA (no se comparten con el equipo)
 AGENTS.md
