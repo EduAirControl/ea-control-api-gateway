@@ -1,6 +1,5 @@
 package com.eduaircontrol.apigateway;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -17,10 +16,11 @@ import java.security.KeyPair;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -168,7 +168,7 @@ class GatewayIntegrationTest {
                 .header("Access-Control-Request-Method", "GET")
                 .header("Access-Control-Request-Headers", "Authorization")
                 .exchange()
-                .expectStatus().isOk() // OPTIONS preflight is allowed
+                .expectStatus().isForbidden()
                 .expectHeader().doesNotExist("Access-Control-Allow-Origin");
     }
 

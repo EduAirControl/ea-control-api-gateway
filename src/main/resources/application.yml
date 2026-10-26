@@ -73,8 +73,7 @@ app:
   rate-limit:
     max-requests: ${RATE_LIMIT_MAX:100}
     window-seconds: ${RATE_LIMIT_WINDOW:60}
-    exempt-paths:
-      - /health
+    exempt-paths: ${RATE_LIMIT_EXEMPT_PATHS:/health}
     trusted-proxies: ${RATE_LIMIT_TRUSTED_PROXIES:127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
   upstreams:
     ms-security: ${AUTH_URI:http://localhost:8081}
