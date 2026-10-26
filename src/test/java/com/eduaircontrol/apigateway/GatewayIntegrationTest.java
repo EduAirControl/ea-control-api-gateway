@@ -168,7 +168,7 @@ class GatewayIntegrationTest {
                 .header("Access-Control-Request-Method", "GET")
                 .header("Access-Control-Request-Headers", "Authorization")
                 .exchange()
-                .expectStatus().isOk() // OPTIONS preflight is allowed
+                .expectStatus().isForbidden()
                 .expectHeader().doesNotExist("Access-Control-Allow-Origin");
     }
 
