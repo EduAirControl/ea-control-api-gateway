@@ -18,7 +18,8 @@ FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-RUN groupadd -r appgroup -g 1000 && useradd -r -g appgroup -u 1000 appuser
+RUN groupadd -r appgroup && \
+    useradd -r -g appgroup appuser
 COPY --from=builder /app/target/*.jar app.jar
 RUN chown appuser:appgroup app.jar
 
