@@ -1,5 +1,6 @@
 package com.eduaircontrol.apigateway.web;
 
+import com.eduaircontrol.apigateway.filter.JwtAuthenticationFilter;
 import com.eduaircontrol.apigateway.security.JwtPrincipal;
 import com.eduaircontrol.apigateway.security.JwtValidator;
 import java.util.LinkedHashMap;
@@ -14,12 +15,12 @@ import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClient
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Devuelve la identidad del usuario autenticado en el BFF (ADR-017), a partir del
- * access token guardado en la sesión. El SPA no maneja tokens: consulta aquí quién
- * es. Compatible con tokens RS256 de ms-security.
+ * Devuelve la identidad del usuario autenticado (ADR-017), a partir del access token
+ * resuelto por el gateway (cookie httpOnly, Bearer o sesión OAuth2 del BFF).
  */
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +30,11 @@ public class MeController {
     private final JwtValidator jwtValidator;
 
     @GetMapping("/api/v1/me")
-    public Mono<ResponseEntity<Map<String, Object>>> me() {
+    public Mono<ResponseEntity<Map<String, Object>>> me(ServerWebExchange exchange) {
+        Object attr = exchange.getAttribute(JwtAuthenticationFilter.PRINCIPAL_ATTRIBUTE);
+        if (attr instanceof JwtPrincipal principal) {
+            return Mono.just(ResponseEntity.ok(toBody(principal)));
+        }
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .filter(authentication -> authentication instanceof OAuth2AuthenticationToken)
