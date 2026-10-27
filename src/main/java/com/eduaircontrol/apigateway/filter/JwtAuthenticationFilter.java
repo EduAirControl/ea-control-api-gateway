@@ -63,6 +63,12 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         if (header != null && header.startsWith(BEARER)) {
             return Mono.just(header.substring(BEARER.length()));
         }
+        // BFF por cookie (G-09): el navegador no maneja tokens en JS; el access
+        // token viaja en la cookie httpOnly "access_token".
+        org.springframework.http.HttpCookie cookie = exchange.getRequest().getCookies().getFirst("access_token");
+        if (cookie != null && !cookie.getValue().isBlank()) {
+            return Mono.just(cookie.getValue());
+        }
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .filter(authentication -> authentication instanceof OAuth2AuthenticationToken)
